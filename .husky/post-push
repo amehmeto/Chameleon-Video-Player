@@ -1,0 +1,4 @@
+#!/bin/sh
+
+printf "\n\033[0;32mPush completed successfully!\033[0m\n"
+printf "Remember to open a PR if you haven't already.\n"
