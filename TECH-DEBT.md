@@ -22,9 +22,10 @@ A transparent video overlay player built with Electron. It allows you to watch v
 | Remove Flash dead code                       | #2  | 2026-02 |
 | Fix Widevine/DRM (Castlabs ECS)              | #2  | 2026-02 |
 | Remove robotjs dependency                    | #2  | 2026-02 |
-| electron-builder v25 → v26                   | -   | 2026-02 |
+| electron-builder v25 → v26                   | #3  | 2026-02 |
 | menubar v8 → v9                              | #2  | 2026-02 |
 | crypto-js v3 → v4                            | #2  | 2026-02 |
+| Node.js 18 → 22                              | -   | 2026-02 |
 
 ---
 
@@ -35,7 +36,6 @@ A transparent video overlay player built with Electron. It allows you to watch v
 | Issue                              | Notes                                       |
 | ---------------------------------- | ------------------------------------------- |
 | Missing `enterlicense` IPC handler | Preload whitelists it but no handler exists |
-| Node.js 18 → 20+                   | Many deps now require Node 20+              |
 
 ### P2 - Code Quality
 
