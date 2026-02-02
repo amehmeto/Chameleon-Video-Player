@@ -11,7 +11,14 @@
     "dist": "build",
     "postinstall": "electron-builder install-app-deps",
     "v": "electron -v",
-    "electron-rebuild": "electron-rebuild -v 8.0.0"
+    "electron-rebuild": "electron-rebuild -v 8.0.0",
+    "lint": "npm run lint:js && npm run lint:format",
+    "lint:fix": "npm run lint:js:fix && npm run lint:format:fix",
+    "lint:js": "eslint .",
+    "lint:js:fix": "eslint --fix .",
+    "lint:format": "prettier --check --ignore-path .prettierignore .",
+    "lint:format:fix": "prettier --write --ignore-path .prettierignore .",
+    "prepare": "husky"
   },
   "build": {
     "electronVersion": "8.0.0",
@@ -64,13 +71,13 @@
     "afterSign": "./widevine-build.js"
   },
   "dependencies": {
+    "@jitsi/robotjs": "^0.6.0",
     "add": "^2.0.6",
     "crypto-js": "^3.1.9-1",
     "electron-storage": "^1.0.7",
     "menubar": "^8.0.0",
     "node-abi": "^2.15.0",
-    "npm": "^6.12.0",
-    "@jitsi/robotjs": "^0.6.0"
+    "npm": "^6.12.0"
   },
   "author": {
     "name": "Christopher Cinq-Mars Jarvis",
@@ -81,6 +88,12 @@
     "electron": "github:castlabs/electron-releases#v8.1.1-wvvmp",
     "electron-builder": "^22.3.2",
     "electron-notarize": "^0.2.1",
-    "electron-rebuild": "^1.10.0"
+    "electron-rebuild": "^1.10.0",
+    "eslint": "^9.39.2",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-prettier": "^5.5.5",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.2.7",
+    "prettier": "^3.8.1"
   }
 }

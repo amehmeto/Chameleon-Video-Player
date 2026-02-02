@@ -1,0 +1,12 @@
+# Dependencies
+node_modules
+
+# Build outputs
+build
+dist
+
+# Generated files
+package-lock.json
+
+# Electron specific
+*.asar

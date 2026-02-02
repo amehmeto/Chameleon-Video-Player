@@ -1,0 +1,5 @@
+sh .husky/scripts/no-direct-push-main.sh
+sh .husky/scripts/branch-name-check.sh
+sh .husky/scripts/uncommitted-files-check.sh
+
+printf "Pre-push checks passed.\n"
