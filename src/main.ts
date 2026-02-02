@@ -30,22 +30,6 @@ interface ClickableRegionOptions {
   height?: number
 }
 
-interface Defaults {
-  email: string | null
-  sn: string | null
-  opacity: number
-  trials: number
-  relaunch: boolean
-}
-
-const _defaults: Defaults = {
-  email: null,
-  sn: null,
-  opacity: 0.3,
-  trials: 5,
-  relaunch: false,
-}
-
 let toggleCounter = 0
 let dia = false
 
@@ -304,37 +288,6 @@ function start(): void {
   })
 }
 
-function _checkSN(email: string | null, sn: string | null): boolean {
-  if (email === null || sn === null) return false
-
-  if (email.length < 5 || sn.length !== 12) return false
-
-  email = email.replace(/\./g, '')
-  email = email.replace(/@/g, '')
-  email = email.replace(/_/g, '')
-
-  let hash: number = Math.pow(parseInt(email, 36), 0.2)
-  hash = Math.floor(hash * 100000000) / 100000000
-
-  let p = String(hash).replace('e', '7')
-  p = p.replace(/\+/g, '5')
-  p = p.replace(/\./g, '2')
-  p = p.substring(0, 14)
-
-  let testhash = parseInt(p).toString(34)
-
-  testhash = testhash.replace(/0/g, 'J')
-  testhash = testhash.replace(/1/g, 'W')
-  testhash = testhash.toUpperCase()
-  testhash = testhash.replace(/0/g, 'V')
-  testhash = testhash + '1YC0Q1PU8BXLWR47'
-  if (testhash.length > 12) testhash = testhash.substring(0, 12)
-
-  if (testhash === sn) return true
-
-  return false
-}
-
 let promptWin: BrowserWindow | undefined
 
 function promptDonate(): void {
@@ -404,10 +357,6 @@ function ready(): void {
           })
       })
   } else start()
-}
-
-function _postdialog(_file: unknown): void {
-  //console.log('fires')
 }
 
 function getdimensions(): void {
@@ -669,8 +618,7 @@ app.on('activate', function () {
 })
 
 /* eslint-disable no-console */
-// Castlabs Widevine events - these are custom events not in standard Electron types
-// @ts-expect-error - widevine-ready is a Castlabs-specific event
+// Castlabs Widevine events - types defined in ./types/castlabs-electron.d.ts
 app.on('widevine-ready', (version: string, lastVersion: string | null) => {
   if (null !== lastVersion) {
     console.log(
@@ -683,24 +631,20 @@ app.on('widevine-ready', (version: string, lastVersion: string | null) => {
   } else console.log('Widevine ' + version + ' is ready to be used!')
 })
 
-// @ts-expect-error - widevine-update-pending is a Castlabs-specific event
-app.on('widevine-update-pending', (currentVersion: string, pendingVersion: string) => {
-  console.log(
-    'Widevine ' +
-      currentVersion +
-      ' is ready to be upgraded to ' +
-      pendingVersion +
-      '!',
-  )
-})
+app.on(
+  'widevine-update-pending',
+  (currentVersion: string, pendingVersion: string) => {
+    console.log(
+      'Widevine ' +
+        currentVersion +
+        ' is ready to be upgraded to ' +
+        pendingVersion +
+        '!',
+    )
+  },
+)
 
-// @ts-expect-error - widevine-error is a Castlabs-specific event
 app.on('widevine-error', (error: Error) => {
   console.log('Widevine installation encountered an error: ' + error)
 })
 /* eslint-enable no-console */
-
-// Mark unused variables/functions to avoid lint errors
-void _defaults
-void _checkSN
-void _postdialog
