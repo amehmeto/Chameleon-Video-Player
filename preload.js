@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 const { contextBridge, ipcRenderer, webFrame } = require('electron')
 
 // Whitelist of valid IPC channels for security
@@ -68,17 +69,59 @@ contextBridge.exposeInMainWorld('api', {
     }
   },
 
-  // Invoke handlers (async)
-  invoke: (channel, data) => ipcRenderer.invoke(channel, data),
+  // Invoke handlers (async) with error handling
+  invoke: async (channel, data) => {
+    try {
+      return await ipcRenderer.invoke(channel, data)
+    } catch (error) {
+      console.error(`IPC invoke error on channel "${channel}":`, error)
+      throw error
+    }
+  },
 
   // App control (replaces remote.app)
-  relaunch: () => ipcRenderer.invoke('app:relaunch'),
-  quit: () => ipcRenderer.invoke('app:quit'),
+  relaunch: async () => {
+    try {
+      return await ipcRenderer.invoke('app:relaunch')
+    } catch (error) {
+      console.error('Failed to relaunch app:', error)
+      throw error
+    }
+  },
+  quit: async () => {
+    try {
+      return await ipcRenderer.invoke('app:quit')
+    } catch (error) {
+      console.error('Failed to quit app:', error)
+      throw error
+    }
+  },
 
   // Global getters (replaces remote.getGlobal)
-  getPlaylist: () => ipcRenderer.invoke('get:playlist'),
-  getSteam: () => ipcRenderer.invoke('get:steam'),
-  getTrials: () => ipcRenderer.invoke('get:trials'),
+  getPlaylist: async () => {
+    try {
+      return await ipcRenderer.invoke('get:playlist')
+    } catch (error) {
+      console.error('Failed to get playlist:', error)
+      return null
+    }
+  },
+  getSteam: async () => {
+    try {
+      return await ipcRenderer.invoke('get:steam')
+    } catch (error) {
+      console.error('Failed to get steam status:', error)
+      return null
+    }
+  },
+  getTrials: async () => {
+    try {
+      return await ipcRenderer.invoke('get:trials')
+    } catch (error) {
+      console.error('Failed to get trials:', error)
+      return 0
+    }
+  },
 
   // Platform info
   platform: process.platform,

@@ -14,11 +14,11 @@ async function initGlobals() {
   trials = await window.api.getTrials()
 }
 
-function bakc() {
+function _bakc() {
   window.api.send('goBack')
 }
 
-function toggleHIDE() {
+function _toggleHIDE() {
   window.api.send('autotoggle')
 }
 
@@ -55,49 +55,51 @@ function toggleIT(bool) {
   window.api.send('toggle')
 }
 
-window.api.on('toggleView', function () {
-  toggleIT()
-})
-
-window.api.on('shortcut', function (arg) {
-  var slide = document.getElementById('myRange')
-
-  if (arg == 0) {
-    if (slide) {
-      if (parseFloat(slide.value) == 100 && typeof playlist === 'string') return
-
-      if (parseFloat(slide.value) + 5 >= 100) {
-        if (typeof playlist !== 'string') slide.value = 100
-        else toggleIT()
-      } else slide.value = parseFloat(slide.value) + 5
-    }
-  } else if (arg == 1) {
-    if (slide) {
-      if (parseFloat(slide.value) == 100 && typeof playlist === 'string') {
-        toggleIT(true)
-        return
-      }
-
-      if (parseFloat(slide.value) - 5 < 0) slide.value = 0
-      else slide.value = parseFloat(slide.value) - 5
-    }
-  } else if (arg == 2) {
-    var ele = document.getElementById('playpauser')
-
-    if (ele.src.includes('ic_play_arrow_black_24px'))
-      ele.src = ele.src.replace(/ic_.+/i, 'ic_pause_black_24px.svg')
-    else ele.src = ele.src.replace(/ic_.+/i, 'ic_play_arrow_black_24px.svg')
-  }
-})
-
-window.api.on('toggleViz', function (arg) {
-  if (document.getElementById('browserOverlay'))
-    document.getElementById('browserOverlay').style.display = 'none'
-})
-
 document.addEventListener('DOMContentLoaded', async function () {
-  // Initialize globals first
+  // Initialize globals first - must complete before registering IPC listeners
   await initGlobals()
+
+  // Register IPC listeners after globals are initialized to prevent race conditions
+  window.api.on('toggleView', function () {
+    toggleIT()
+  })
+
+  window.api.on('shortcut', function (arg) {
+    var slide = document.getElementById('myRange')
+
+    if (arg === 0) {
+      if (slide) {
+        if (parseFloat(slide.value) === 100 && typeof playlist === 'string')
+          return
+
+        if (parseFloat(slide.value) + 5 >= 100) {
+          if (typeof playlist !== 'string') slide.value = 100
+          else toggleIT()
+        } else slide.value = parseFloat(slide.value) + 5
+      }
+    } else if (arg === 1) {
+      if (slide) {
+        if (parseFloat(slide.value) === 100 && typeof playlist === 'string') {
+          toggleIT(true)
+          return
+        }
+
+        if (parseFloat(slide.value) - 5 < 0) slide.value = 0
+        else slide.value = parseFloat(slide.value) - 5
+      }
+    } else if (arg === 2) {
+      var ele = document.getElementById('playpauser')
+
+      if (ele.src.includes('ic_play_arrow_black_24px'))
+        ele.src = ele.src.replace(/ic_.+/i, 'ic_pause_black_24px.svg')
+      else ele.src = ele.src.replace(/ic_.+/i, 'ic_play_arrow_black_24px.svg')
+    }
+  })
+
+  window.api.on('toggleViz', function (_arg) {
+    if (document.getElementById('browserOverlay'))
+      document.getElementById('browserOverlay').style.display = 'none'
+  })
 
   var input = document.getElementById('url')
 
@@ -156,14 +158,14 @@ document.addEventListener('DOMContentLoaded', async function () {
   if (document.getElementById('numTrials')) {
     document.getElementById('numTrials').innerHTML = trials
 
-    if (trials == 1) document.getElementById('ess').innerHTML = ''
+    if (trials === 1) document.getElementById('ess').innerHTML = ''
     else document.getElementById('ess').innerHTML = 's'
   }
 
   if (document.getElementById('slidecontainer')) window.api.send('showMenu')
 })
 
-var enterLicense = function () {
+var _enterLicense = function () {
   var email = document.getElementById('email').value
   var sn =
     document.getElementById('sn1').value +
@@ -175,6 +177,7 @@ var enterLicense = function () {
   window.api.send('enterlicense', [email, sn])
 }
 
+// Alert listeners don't depend on globals, safe to register immediately
 window.api.on('invalid', function () {
   alert(
     'Invalid License. Please Re-Check Confirmation Email. Ensure you did not enter your Steam Key, which is separate.',
@@ -189,10 +192,11 @@ window.api.on('triallimit', function () {
   alert('Trial Limit Reached, Please Purchase')
 })
 
+// eslint-disable-next-line no-unused-vars
 var controller = function (param, val) {
   window.api.send(param, val)
 
-  if (param == 'playpause') {
+  if (param === 'playpause') {
     var ele = document.getElementById('playpauser')
 
     if (ele.src.includes('ic_play_arrow_black_24px'))

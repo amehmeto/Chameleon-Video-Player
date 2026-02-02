@@ -12,7 +12,8 @@ var ipcMain = electron.ipcMain
 var globalShortcut = electron.globalShortcut
 const { dialog } = require('electron')
 const storage = require('electron-storage')
-var defaults = {
+
+var _defaults = {
   email: null,
   sn: null,
   opacity: 0.3,
@@ -60,24 +61,24 @@ const TRANSPARENT_HTML = path.join('file://', __dirname, 'transparent.html')
 const MENU = path.join('file://', __dirname, 'menu.html')
 const CHILD_PADDING = 0
 
-const url = require('url')
+const _url = require('url')
 
-ipcMain.on('quitprompt', function (event, arg) {
+ipcMain.on('quitprompt', function (_event, _arg) {
   app.quit()
 })
 
-ipcMain.on('manual', function (event, arg) {
+ipcMain.on('manual', function (_event, _arg) {
   shell.openExternal('http://www.cinqmarsmedia.com/chameleon/manual.html')
 })
-ipcMain.on('cmm', function (event, arg) {
+ipcMain.on('cmm', function (_event, _arg) {
   shell.openExternal('https://www.cinqmarsmedia.com/')
 })
-ipcMain.on('github', function (event, arg) {
+ipcMain.on('github', function (_event, _arg) {
   shell.openExternal(
     'https://github.com/Cinq-Mars-Media/Chameleon-Video-Player',
   )
 })
-ipcMain.on('donate', function (event, arg) {
+ipcMain.on('donate', function (_event, _arg) {
   shell.openExternal(
     'https://www.paypal.com/us/fundraiser/112574644767835624/charity/1944132',
   )
@@ -216,17 +217,15 @@ const addClickableRegion = (options) => {
     })
 }
 
-let modeWin
-
 function start() {
-  ipcMain.on('openStreamBrowser', function (app, url) {
+  ipcMain.on('openStreamBrowser', function (_event, url) {
     global.playlist = url
     getdimensions()
 
     modeWin.close()
   })
 
-  ipcMain.on('openURL', function (event, arg) {
+  ipcMain.on('openURL', function (_event, arg) {
     let result = arg
 
     if (result.match(/[a-z]|[A-Z]/i)) {
@@ -245,11 +244,11 @@ function start() {
     modeWin.close()
   })
 
-  ipcMain.on('showMenu', function (event, arg) {
+  ipcMain.on('showMenu', function (_event, _arg) {
     menubar.showWindow()
   })
 
-  ipcMain.on('startwfile', function (event, arg) {
+  ipcMain.on('startwfile', function (_event, _arg) {
     if (typeof parent !== 'undefined') parent.close()
 
     if (!dia) {
@@ -276,11 +275,12 @@ function start() {
           }
           dia = false
         })
+        // eslint-disable-next-line no-console
         .catch(console.log)
     }
   })
 
-  ipcMain.on('quitprompt', function (event, arg) {
+  ipcMain.on('quitprompt', function (_event, _arg) {
     app.quit()
   })
   //console.log(trials)
@@ -304,13 +304,13 @@ function start() {
   modeWin.loadURL(MODE_HTML)
 
   modeWin.show()
-  modeWin.on('close', function (event) {
+  modeWin.on('close', function (_event) {
     if (typeof global.playlist === 'undefined') app.quit()
   })
 }
 
-function checkSN(email, sn) {
-  if (email == null || sn == null) return false
+function _checkSN(email, sn) {
+  if (email === null || sn === null) return false
 
   if (email.length < 5 || sn.length !== 12) return false
 
@@ -346,7 +346,7 @@ function checkSN(email, sn) {
   //console.log('testhash',testhash);
   //console.log('sn',sn);
 
-  if (testhash == sn) return true
+  if (testhash === sn) return true
 
   return false
 }
@@ -354,13 +354,13 @@ function checkSN(email, sn) {
 let promptWin
 
 function promptDonate() {
-  ipcMain.on('start', function (event, arg) {
+  ipcMain.on('start', function (_event, _arg) {
     start()
     promptWin.close()
     //
   })
 
-  ipcMain.on('startNoPrompt', function (event, arg) {
+  ipcMain.on('startNoPrompt', function (_event, _arg) {
     storage
       .set('auth', {
         data: 'U2FsdGVV3JFudJsuhkjevNoHTzYUz9VwaAMWMvUPaIUsqcDmAKSNWR2eR643rYXSryqb',
@@ -424,13 +424,13 @@ function ready() {
 
         //storage.set('auth', temp);
       })
-      .catch((err) => {
+      .catch((_err) => {
         storage
           .get('data')
-          .then((data) => {
+          .then((_data) => {
             start()
           })
-          .catch((err) => {
+          .catch((_err) => {
             promptDonate()
           })
 
@@ -440,12 +440,12 @@ function ready() {
   } else start()
 }
 
-function postdialog(file) {
+function _postdialog(_file) {
   //console.log('fires')
 }
 
 function getdimensions() {
-  if (process.platform == 'darwin') app.dock.hide()
+  if (process.platform === 'darwin') app.dock.hide()
 
   /*
     tray.on('click', function(event) {
@@ -520,6 +520,7 @@ function createWindow(w, h, p) {
   parent.setVisibleOnAllWorkspaces(true)
 
   ipcMain.on('autotoggle', function () {
+    // eslint-disable-next-line no-console
     console.log('autotoggle')
     if (
       global.menubar &&
@@ -542,49 +543,49 @@ function createWindow(w, h, p) {
     parent.webContents.send('toggleViz', toggleCounter % 2)
   })
 
-  ipcMain.on('goBack', function (event, arg) {
+  ipcMain.on('goBack', function (_event, _arg) {
     /**/
 
     parent.webContents.send('relaunch')
   })
 
-  ipcMain.on('toggleMenu', function (event, arg) {
+  ipcMain.on('toggleMenu', function (_event, _arg) {
     //TOGGLE MENU
   })
 
-  ipcMain.on('opac', function (event, arg) {
+  ipcMain.on('opac', function (_event, arg) {
     parent.webContents.send('opac', arg)
   })
 
-  ipcMain.on('opacityplus', function (event, arg) {
+  ipcMain.on('opacityplus', function (_event, _arg) {
     parent.webContents.send('opacityplus')
   })
 
-  ipcMain.on('opacityminus', function (event, arg) {
+  ipcMain.on('opacityminus', function (_event, _arg) {
     parent.webContents.send('opacityminus')
   })
 
-  ipcMain.on('playpause', function (event, arg) {
+  ipcMain.on('playpause', function (_event, _arg) {
     parent.webContents.send('playpause')
   })
 
-  ipcMain.on('timeplus', function (event, arg) {
+  ipcMain.on('timeplus', function (_event, _arg) {
     parent.webContents.send('timeplus')
   })
 
-  ipcMain.on('timeminus', function (event, arg) {
+  ipcMain.on('timeminus', function (_event, _arg) {
     parent.webContents.send('timeminus')
   })
 
-  ipcMain.on('timefastback', function (event, arg) {
+  ipcMain.on('timefastback', function (_event, _arg) {
     parent.webContents.send('timefastback')
   })
 
-  ipcMain.on('timefastforward', function (event, arg) {
+  ipcMain.on('timefastforward', function (_event, _arg) {
     parent.webContents.send('timefastforward')
   })
 
-  ipcMain.on('quit', function (event, arg) {
+  ipcMain.on('quit', function (_event, _arg) {
     app.quit()
   })
 
@@ -719,8 +720,10 @@ app.whenReady().then(async () => {
   if (components && components.whenReady) {
     try {
       await components.whenReady()
+      // eslint-disable-next-line no-console
       console.log('Widevine CDM ready:', components.status())
     } catch (err) {
+      // eslint-disable-next-line no-console
       console.warn('Widevine CDM initialization failed:', err)
       // Continue anyway - local file playback will still work
     }
@@ -744,6 +747,7 @@ app.on('activate', function () {
   }
 })
 
+/* eslint-disable no-console */
 app.on('widevine-ready', (version, lastVersion) => {
   if (null !== lastVersion) {
     console.log(
@@ -767,6 +771,7 @@ app.on('widevine-update-pending', (currentVersion, pendingVersion) => {
 app.on('widevine-error', (error) => {
   console.log('Widevine installation encountered an error: ' + error)
 })
+/* eslint-enable no-console */
 
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and require them here.
