@@ -65,8 +65,7 @@
       "oneClick": false,
       "allowToChangeInstallationDirectory": true,
       "createDesktopShortcut": "always"
-    },
-    "afterSign": "./widevine-build.js"
+    }
   },
   "dependencies": {
     "crypto-js": "^4.2.0",
@@ -79,9 +78,9 @@
   },
   "license": "",
   "devDependencies": {
-    "electron": "github:castlabs/electron-releases#v34.5.8+wvcus",
-    "electron-builder": "^25.1.8",
     "@electron/notarize": "^2.5.0",
+    "electron": "github:castlabs/electron-releases#v34.5.8+wvcus",
+    "electron-builder": "^26.7.0",
     "eslint": "^9.39.2",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-prettier": "^5.5.5",
