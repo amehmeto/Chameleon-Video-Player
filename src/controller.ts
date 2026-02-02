@@ -156,7 +156,7 @@ function setupPlatformUI(): void {
   if (plat11) plat11.innerText = isWindows ? 'control (^)' : 'command (\u2318) '
 
   setupPlatformSymbols(isWindows)
-  setupScrubbingControls(isWindows)
+  setupScrubbingControls()
 }
 
 function setupPlatformSymbols(isWindows: boolean): void {
@@ -180,12 +180,9 @@ function setupPlatformSymbols(isWindows: boolean): void {
   })
 }
 
-function setupScrubbingControls(isWindows: boolean): void {
+function setupScrubbingControls(): void {
   const scrubbing = document.getElementById('scrubbing')
   if (!scrubbing) return
-
-  // Platform symbols already set by setupPlatformSymbols
-  void isWindows
 
   if (typeof playlist === 'string') {
     scrubbing.style.display = 'none'

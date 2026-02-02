@@ -202,7 +202,8 @@ function start(): void {
   ipcMain.on(
     'openStreamBrowser',
     function (_event: IpcMainEvent, url: unknown) {
-      global.playlist = url as string
+      if (typeof url !== 'string') return
+      global.playlist = url
       getdimensions()
 
       if (modeWin) modeWin.close()
@@ -210,7 +211,8 @@ function start(): void {
   )
 
   ipcMain.on('openURL', function (_event: IpcMainEvent, arg: unknown) {
-    let result = arg as string
+    if (typeof arg !== 'string') return
+    let result = arg
 
     if (result.match(/[a-z]|[A-Z]/i)) {
       if (!result.includes('http')) {
