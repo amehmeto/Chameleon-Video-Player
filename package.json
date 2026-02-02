@@ -4,6 +4,9 @@
   "description": "Play video transparently full screen while working in the background",
   "main": "main.js",
   "homepage": "https://www.cinqmarsmedia.com/",
+  "engines": {
+    "node": ">=22"
+  },
   "scripts": {
     "start": "electron . --enable-logging --remote-debugging-port='8315'",
     "pack": "electron-builder --dir",
