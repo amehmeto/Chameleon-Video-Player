@@ -1,8 +1,9 @@
-# Chameleon Video Player - Codebase Analysis
+# Chameleon Video Player - Tech Debt Tracker
 
 ## What It Does
 
 A transparent video overlay player built with Electron. It allows you to watch videos (local files or streaming services) in a transparent fullscreen overlay while working in other apps. Key features:
+
 - Transparent fullscreen video playback with adjustable opacity
 - Local file support (mkv, avi, mp4)
 - 25+ streaming service shortcuts (Netflix, YouTube, etc.)
@@ -11,13 +12,57 @@ A transparent video overlay player built with Electron. It allows you to watch v
 
 ---
 
-## Architecture (2,453 lines of code)
+## ✅ Completed
+
+| Item                                         | PR  | Date    |
+| -------------------------------------------- | --- | ------- |
+| ESLint + Prettier + Husky                    | #1  | 2026-02 |
+| Electron v8 → v34 (Castlabs)                 | #2  | 2026-02 |
+| Security: contextIsolation, sandbox, preload | #2  | 2026-02 |
+| Remove Flash dead code                       | #2  | 2026-02 |
+| Fix Widevine/DRM (Castlabs ECS)              | #2  | 2026-02 |
+| Remove robotjs dependency                    | #2  | 2026-02 |
+| electron-builder v25 → v26                   | -   | 2026-02 |
+| menubar v8 → v9                              | #2  | 2026-02 |
+| crypto-js v3 → v4                            | #2  | 2026-02 |
+
+---
+
+## 🔴 Remaining Tech Debt
+
+### P1 - High Priority
+
+| Issue                              | Notes                                       |
+| ---------------------------------- | ------------------------------------------- |
+| Missing `enterlicense` IPC handler | Preload whitelists it but no handler exists |
+| Node.js 18 → 20+                   | Many deps now require Node 20+              |
+
+### P2 - Code Quality
+
+| Issue                      | Notes                                                  |
+| -------------------------- | ------------------------------------------------------ |
+| Split main.js (~800 lines) | Into: ipc-handlers.js, window-manager.js, shortcuts.js |
+| Remove dead code           | 50+ lines of commented-out code                        |
+| Add tests                  | Zero test coverage                                     |
+| Clean up licensing         | Client-side validation easily bypassable               |
+| Steam integration          | Code exists but non-functional                         |
+
+### P3 - Features
+
+| Issue     | Notes                               |
+| --------- | ----------------------------------- |
+| GitHub #7 | Drag-and-drop / "Open With" support |
+
+---
+
+## Architecture
 
 | File          | Lines | Purpose                                       |
-|---------------|-------|-----------------------------------------------|
-| main.js       | 818   | Main process, IPC handlers, window management |
-| controller.js | 338   | UI controller for menu interactions           |
-| renderer.js   | 234   | Video rendering and media controls            |
+| ------------- | ----- | --------------------------------------------- |
+| main.js       | ~800  | Main process, IPC handlers, window management |
+| preload.js    | ~130  | contextBridge API for secure IPC              |
+| controller.js | ~210  | UI controller for menu interactions           |
+| renderer.js   | ~170  | Video rendering and media controls            |
 | index.html    | 163   | Main video playback window                    |
 | menu.html     | 202   | Menubar interface                             |
 | mode.html     | 295   | Source selection screen                       |
@@ -25,87 +70,7 @@ A transparent video overlay player built with Electron. It allows you to watch v
 
 ---
 
-## Open GitHub Issues
+## Notes
 
-Only 1 open issue:
-- #7 - "Local Files: Open With Dialog and default Application" (enhancement)
-  - Request to support drag-and-drop and "Open With" functionality
-  - Author willing to accept PRs or implement if there's interest
-
----
-
-## Critical Maintenance Priorities
-
-### 🔴 P0 - Security Critical
-
-1. Electron v8.1.1 is 5+ years old - No security patches since 2020
-2. `nodeIntegration: true` in all windows - Major security vulnerability
-3. No context isolation or sandbox - Renderers have full Node.js access
-4. Weak client-side license validation - Easily bypassable
-
-### 🟠 P1 - High Priority
-
-| Issue            | Current      | Should Be |
-|------------------|--------------|-----------|
-| Electron         | v8.1.1-wvvmp | v27+      |
-| electron-builder | v22          | v26       |
-| menubar          | v8           | v9        |
-| crypto-js        | v3.3         | v4.2      |
-
-### 🟡 P2 - Code Quality
-
-- main.js is monolithic (818 lines) - Should split into modules
-- 50+ lines of commented-out code - Dead code to remove
-- Global variable pollution - No state management
-- No tests - Zero test coverage
-- robotjs dependency - Already commented out, should remove
-
----
-
-## Deprecated/Broken Features
-
-- Flash player support - Flash is dead
-- Widevine DRM - Returns 404 error, hardcoded outdated version
-- Steam integration - Code exists but appears non-functional
-
----
-
-## Recommended Modernization Roadmap
-
-### Phase 1 - Security (urgent)
-
-```javascript
-// Replace this (insecure):
-webPreferences: { nodeIntegration: true }
-
-// With this (secure):
-webPreferences: {
-  nodeIntegration: false,
-  contextIsolation: true,
-  sandbox: true,
-  preload: path.join(__dirname, 'preload.js')
-}
-```
-
-- Upgrade Electron to v27+
-- Create preload scripts for IPC
-- Enable sandbox and context isolation
-
-### Phase 2 - Refactoring
-
-- Split main.js into: `ipc-handlers.js`, `window-manager.js`, `player-controller.js`
-- Add ESLint + Prettier
-- Add basic test suite
-
-### Phase 3 - Cleanup
-
-- Remove Flash/Widevine dead code
-- Remove robotjs dependency
-- Fix or remove licensing system
-- Implement issue #7 (drag-and-drop support)
-
----
-
-## Summary
-
-The app has solid bones but is severely outdated. The biggest concern is security - the Electron version and configuration make it vulnerable. If you plan to maintain this, prioritize the Electron upgrade and security hardening before adding new features.
+- For production Widevine builds, EVS signing required: `pip install castlabs-evs`
+- afterSign hook removed from build config (no widevine-build.js)
