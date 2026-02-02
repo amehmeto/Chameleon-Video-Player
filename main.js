@@ -189,7 +189,6 @@ const addClickableRegion = (options) => {
       },
       tooltip: 'Chameleon Player Options',
       preloadWindow: true,
-      preloadWindow: true,
     })
     global.menubar = menubar
     globalShortcut.register('Shift+CommandOrControl+t', () => {
@@ -371,7 +370,7 @@ function promptDonate() {
       })
   })
 
-  const promptWin = new BrowserWindow({
+  promptWin = new BrowserWindow({
     width: 600,
     height: 520,
     frame: false,
@@ -518,6 +517,24 @@ function createWindow(w, h, p) {
   parent.setAlwaysOnTop(true, 'floating', 0)
   // allows the window to show over a fullscreen window
   parent.setVisibleOnAllWorkspaces(true)
+
+  // Remove any existing listeners to prevent memory leaks if createWindow() is called multiple times
+  const parentIpcChannels = [
+    'autotoggle',
+    'toggle',
+    'goBack',
+    'toggleMenu',
+    'opac',
+    'opacityplus',
+    'opacityminus',
+    'playpause',
+    'timeplus',
+    'timeminus',
+    'timefastback',
+    'timefastforward',
+    'quit',
+  ]
+  parentIpcChannels.forEach((channel) => ipcMain.removeAllListeners(channel))
 
   ipcMain.on('autotoggle', function () {
     // eslint-disable-next-line no-console
