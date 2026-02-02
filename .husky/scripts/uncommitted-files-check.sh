@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+set -e
 
 if ! git diff-index --quiet HEAD --; then
   printf "\033[0;35mError: You have uncommitted changes.\033[0m\n"

@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+set -e
 
 branch=$(git branch --show-current)
 keywords="feat, fix, refactor, docs, chore, test, perf, build, ci, style"
