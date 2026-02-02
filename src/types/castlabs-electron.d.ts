@@ -1,6 +1,17 @@
 // Type definitions for Castlabs Electron (electron-releases) Widevine events
 // These events are specific to the Castlabs fork of Electron that includes Widevine CDM support
 
+/**
+ * Castlabs Components API for Widevine CDM management
+ * Available in Castlabs Electron builds (electron-releases)
+ */
+interface CastlabsComponents {
+  /** Wait for the Widevine CDM to be ready */
+  whenReady: () => Promise<void>
+  /** Get the current status of the Widevine CDM */
+  status: () => string
+}
+
 // Note: Module augmentation for electron's App interface to add Widevine-specific events
 declare namespace Electron {
   interface App {

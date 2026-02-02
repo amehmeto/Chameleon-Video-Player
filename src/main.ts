@@ -8,19 +8,15 @@ import {
   screen as screenElectron,
   IpcMainEvent,
 } from 'electron'
+import * as electron from 'electron'
 import * as path from 'path'
 import * as storage from 'electron-storage'
 import { menubar as Menubar, Menubar as MenubarType } from 'menubar'
 
-// Castlabs components API for Widevine CDM
-
-const electron = require('electron')
-const { components } = electron as {
-  components?: {
-    whenReady: () => Promise<void>
-    status: () => string
-  }
-}
+// Castlabs components API for Widevine CDM (not in standard Electron types)
+// Type defined in ./types/castlabs-electron.d.ts
+const components = (electron as unknown as { components?: CastlabsComponents })
+  .components
 
 interface ClickableRegionOptions {
   parent: BrowserWindow
