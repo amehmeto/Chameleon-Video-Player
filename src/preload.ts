@@ -1,8 +1,13 @@
 /* eslint-disable no-console */
-const { contextBridge, ipcRenderer, webFrame } = require('electron')
+import {
+  contextBridge,
+  ipcRenderer,
+  webFrame,
+  IpcRendererEvent,
+} from 'electron'
 
 // Whitelist of valid IPC channels for security
-const validSendChannels = [
+const validSendChannels: string[] = [
   'quitprompt',
   'manual',
   'cmm',
@@ -30,7 +35,7 @@ const validSendChannels = [
   'enterlicense',
 ]
 
-const validReceiveChannels = [
+const validReceiveChannels: string[] = [
   'relaunch',
   'toggleViz',
   'toggleView',
@@ -55,22 +60,27 @@ const validReceiveChannels = [
 
 contextBridge.exposeInMainWorld('api', {
   // IPC communication
-  send: (channel, data) => {
+  send: (channel: string, data?: unknown): void => {
     if (validSendChannels.includes(channel)) ipcRenderer.send(channel, data)
   },
 
-  on: (channel, callback) => {
+  on: (
+    channel: string,
+    callback: (...args: unknown[]) => void,
+  ): (() => void) | undefined => {
     if (validReceiveChannels.includes(channel)) {
       // Wrap callback to strip event object for security
-      const subscription = (_event, ...args) => callback(...args)
+      const subscription = (_event: IpcRendererEvent, ...args: unknown[]) =>
+        callback(...args)
       ipcRenderer.on(channel, subscription)
       // Return unsubscribe function
       return () => ipcRenderer.removeListener(channel, subscription)
     }
+    return undefined
   },
 
   // Invoke handlers (async) with error handling
-  invoke: async (channel, data) => {
+  invoke: async (channel: string, data?: unknown): Promise<unknown> => {
     try {
       return await ipcRenderer.invoke(channel, data)
     } catch (error) {
@@ -80,17 +90,17 @@ contextBridge.exposeInMainWorld('api', {
   },
 
   // App control (replaces remote.app)
-  relaunch: async () => {
+  relaunch: async (): Promise<void> => {
     try {
-      return await ipcRenderer.invoke('app:relaunch')
+      await ipcRenderer.invoke('app:relaunch')
     } catch (error) {
       console.error('Failed to relaunch app:', error)
       throw error
     }
   },
-  quit: async () => {
+  quit: async (): Promise<void> => {
     try {
-      return await ipcRenderer.invoke('app:quit')
+      await ipcRenderer.invoke('app:quit')
     } catch (error) {
       console.error('Failed to quit app:', error)
       throw error
@@ -98,25 +108,28 @@ contextBridge.exposeInMainWorld('api', {
   },
 
   // Global getters (replaces remote.getGlobal)
-  getPlaylist: async () => {
+  getPlaylist: async (): Promise<string | string[] | null> => {
     try {
-      return await ipcRenderer.invoke('get:playlist')
+      return (await ipcRenderer.invoke('get:playlist')) as
+        | string
+        | string[]
+        | null
     } catch (error) {
       console.error('Failed to get playlist:', error)
       return null
     }
   },
-  getSteam: async () => {
+  getSteam: async (): Promise<boolean | null> => {
     try {
-      return await ipcRenderer.invoke('get:steam')
+      return (await ipcRenderer.invoke('get:steam')) as boolean | null
     } catch (error) {
       console.error('Failed to get steam status:', error)
       return null
     }
   },
-  getTrials: async () => {
+  getTrials: async (): Promise<number> => {
     try {
-      return await ipcRenderer.invoke('get:trials')
+      return (await ipcRenderer.invoke('get:trials')) as number
     } catch (error) {
       console.error('Failed to get trials:', error)
       return 0
@@ -127,7 +140,7 @@ contextBridge.exposeInMainWorld('api', {
   platform: process.platform,
 
   // WebFrame zoom control (for controller.js)
-  setZoomLimits: () => {
+  setZoomLimits: (): void => {
     webFrame.setVisualZoomLevelLimits(1, 1)
   },
 })

@@ -2,15 +2,18 @@
   "name": "ChameleonPlayer",
   "version": "2.0.0",
   "description": "Play video transparently full screen while working in the background",
-  "main": "main.js",
+  "main": "dist/main.js",
   "homepage": "https://www.cinqmarsmedia.com/",
   "engines": {
     "node": ">=22"
   },
   "scripts": {
-    "start": "electron . --enable-logging --remote-debugging-port='8315'",
-    "pack": "electron-builder --dir",
-    "dist": "electron-builder",
+    "build": "tsc",
+    "start": "npm run build && electron ./dist/main.js --enable-logging",
+    "watch": "tsc --watch",
+    "dev": "tsc && electron ./dist/main.js --enable-logging",
+    "pack": "npm run build && electron-builder --dir",
+    "dist": "npm run build && electron-builder",
     "postinstall": "electron-builder install-app-deps && node scripts/fix-electron-frameworks.js",
     "v": "electron -v",
     "lint": "npm run lint:js && npm run lint:format",
@@ -26,6 +29,11 @@
     "productName": "Chameleon Player",
     "electronDist": "./node_modules/electron/dist/",
     "appId": "com.cinqmarsmedia.chameleon",
+    "files": [
+      "dist/**/*",
+      "assets/**/*",
+      "*.html"
+    ],
     "dmg": {
       "contents": [
         {
@@ -82,6 +90,9 @@
   "license": "",
   "devDependencies": {
     "@electron/notarize": "^2.5.0",
+    "@types/node": "^25.2.0",
+    "@typescript-eslint/eslint-plugin": "^8.54.0",
+    "@typescript-eslint/parser": "^8.54.0",
     "electron": "github:castlabs/electron-releases#v34.5.8+wvcus",
     "electron-builder": "^26.7.0",
     "eslint": "^9.39.2",
@@ -89,6 +100,7 @@
     "eslint-plugin-prettier": "^5.5.5",
     "husky": "^9.1.7",
     "lint-staged": "^16.2.7",
-    "prettier": "^3.8.1"
+    "prettier": "^3.8.1",
+    "typescript": "^5.9.3"
   }
 }
