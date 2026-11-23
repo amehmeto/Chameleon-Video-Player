@@ -8,9 +8,9 @@
     "node": ">=22"
   },
   "scripts": {
-    "build": "tsc",
+    "build": "tsc -p tsconfig.json && tsc -p tsconfig.renderer.json",
     "start": "npm run build && electron ./dist/main.js --enable-logging",
-    "watch": "tsc --watch",
+    "watch": "tsc -p tsconfig.json --watch & tsc -p tsconfig.renderer.json --watch",
     "dev": "tsc && electron ./dist/main.js --enable-logging",
     "pack": "npm run build && electron-builder --dir",
     "dist": "npm run build && electron-builder",
