@@ -2,8 +2,6 @@
 // be executed in the renderer process for that window.
 // Uses preload API for secure IPC communication (Electron 12+)
 
-import './types/global'
-
 let savedOpacity = 0.25
 let playlist: string | string[] | null = null
 let fileMode = true
@@ -195,3 +193,7 @@ window.api.on('timefastforward', function () {
 if (document.readyState === 'loading')
   document.addEventListener('DOMContentLoaded', init)
 else init()
+
+// Loaded as an ES module (<script type="module">): keeps top-level
+// declarations file-scoped so controller.js and renderer.js don't collide.
+export {}

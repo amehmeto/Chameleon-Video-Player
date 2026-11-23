@@ -13,7 +13,7 @@ export default [
       sourceType: 'module',
       parser: tsparser,
       parserOptions: {
-        project: './tsconfig.json',
+        project: ['./tsconfig.json', './tsconfig.renderer.json'],
       },
       globals: {
         // Node.js globals

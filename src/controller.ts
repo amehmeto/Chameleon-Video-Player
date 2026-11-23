@@ -1,8 +1,6 @@
 // Controller for menu and mode windows
 // Uses preload API for secure IPC communication (Electron 12+)
 
-import './types/global'
-
 let playlist: string | string[] | null = null
 let steam: boolean | null = null
 let trials: number | null = null
@@ -270,3 +268,7 @@ window.controller = function (param: string, val?: unknown): void {
 
 // Set zoom limits via preload API
 window.api.setZoomLimits()
+
+// Loaded as an ES module (<script type="module">): keeps top-level
+// declarations file-scoped so controller.js and renderer.js don't collide.
+export {}
