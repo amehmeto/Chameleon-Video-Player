@@ -22,7 +22,8 @@
     "lint:js:fix": "eslint --fix .",
     "lint:format": "prettier --check --ignore-path .prettierignore .",
     "lint:format:fix": "prettier --write --ignore-path .prettierignore .",
-    "prepare": "husky"
+    "prepare": "husky",
+    "smoke": "node scripts/smoke-test.js"
   },
   "build": {
     "electronVersion": "34.5.8",
